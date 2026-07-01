@@ -1,0 +1,113 @@
+# ==============================================================
+# PostureSec Terraform Lab — CI Pipeline
+# ==============================================================
+# Runs on PRs that touch terraform/. Validates format, syntax, and security.
+# Does NOT run terraform apply (instructor applies manually on EC2).
+# ==============================================================
+
+name: Terraform CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-ci.yml"
+      - ".checkov.yml"
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-ci.yml"
+      - ".checkov.yml"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: terraform
+
+jobs:
+  # ==============================================================
+  # STAGE 1: Format check
+  # ==============================================================
+  fmt:
+    name: "Terraform Format"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: terraform fmt -check
+        run: terraform fmt -check -recursive
+
+  # ==============================================================
+  # STAGE 2: Init + Validate (no AWS credentials needed)
+  # ==============================================================
+  validate:
+    name: "Terraform Validate"
+    runs-on: ubuntu-latest
+    needs: fmt
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: terraform init (local backend only)
+        run: terraform init -backend=false
+
+      - name: terraform validate
+        run: terraform validate
+
+  # ==============================================================
+  # STAGE 3: IaC Security Scan (Checkov) — same skips as PostureSec
+  # ==============================================================
+  checkov:
+    name: "Checkov IaC Scan"
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov on Terraform
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform/
+          framework: terraform
+          config_file: .checkov.yml
+          soft_fail: false
+          output_format: cli
+
+  # ==============================================================
+  # STAGE 4 (optional stretch): tflint
+  # ==============================================================
+  tflint:
+    name: "TFLint"
+    runs-on: ubuntu-latest
+    needs: validate
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Init TFLint
+        working-directory: terraform
+        run: tflint --init
+
+      - name: Run TFLint
+        working-directory: terraform
+        run: tflint -f compact
