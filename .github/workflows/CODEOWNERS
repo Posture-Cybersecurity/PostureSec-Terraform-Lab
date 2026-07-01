@@ -4,7 +4,7 @@
 # ==========================================
 
 # Owner 1: Manages the configuration file
-terraform/provider.tf      @emanet11
+.github/     @emanet1 #[organization]/repository
 
 # # Owner 2: Manages the main application file
 # /src/app.js                 @user2
