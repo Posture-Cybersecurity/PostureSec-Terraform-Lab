@@ -1,0 +1,19 @@
+# ==========================================
+# FILE OWNERSHIP CONFIGURATION
+# Each line links a specific file to one owner.
+# ==========================================
+
+# Owner 1: Manages the configuration file
+terraform/provider.tf      @emanet11
+
+# # Owner 2: Manages the main application file
+# /src/app.js                 @user2
+
+# # Owner 3: Manages the database schema
+# /db/schema.sql              @user3
+
+# # Owner 4: Manages user documentation
+# /docs/readme.md             @user4
+
+# # Owner 5: Manages deployment settings
+# /deployment/docker-compose.yml   @user1
