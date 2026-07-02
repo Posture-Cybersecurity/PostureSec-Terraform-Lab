@@ -4,19 +4,19 @@
 # ==========================================
 
 # Owner 1: Manages the configuration file
-.github/     @emanet1 #[organization]/repository
+.github/     @emanet1
 
-# # Owner 2: Manages the main application file
-/terraform/terraform.tfvars     @udememi           
+# Owner 2: Manages the main application file
+terraform/terraform.tfvars     @udememi
 
-# # Owner 3: Manages the database schema
-/terraform/outputs.tf      @adanna-ukoha      
+# Owner 3: Manages the database schema
+terraform/outputs.tf      @adanna-ukoha
 
-# # Owner 4: Manages user documentation
-/terraform/variables.tf   @udicuk        
+# Owner 4: Manages user documentation
+terraform/variables.tf   @udicuk
 
-# # Owner 5: Manages deployment settings
- /terraform/main.tf   @Godsstar
+# Owner 5: Manages deployment settings
+terraform/main.tf   @Godsstar
 
-# Owner 6 Manages Providers Files
-/terraform/providers.tf   @epsilon-9
+# Owner 6: Manages Providers Files
+terraform/provider.tf   @epsilon-9
